@@ -1,0 +1,70 @@
+// app/components/AuthLayout.tsx
+import React, { ReactNode } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+interface AuthLayoutProps {
+  children: ReactNode;
+  title: string;
+  subTitle?: string; // Optionnel
+  imageSrc: string;
+  bottomText: string;
+  linkText: string;
+  linkUrl: string;
+}
+
+export default function AuthLayout({
+  children,
+  title,
+  imageSrc,
+  bottomText,
+  linkText,
+  linkUrl,
+}: AuthLayoutProps) {
+  return (
+    <div className="flex min-h-screen w-full bg-white">
+      {/* --- CÔTÉ GAUCHE (Formulaire) --- */}
+      <div className="w-full lg:w-1/3 flex flex-col gap-40 justify-center items-center px-8 sm:px-12 lg:px-35 py-12">
+        {/* Logo ABRICOT */}
+        <div className="mb-12">
+          <Image
+            src="/images/logo.svg" // Chemin depuis le dossier 'public'
+            alt="Logo Abricot"
+            width={180} // Largeur en pixels (ajuste selon ton image)
+            height={60} // Hauteur en pixels (ajuste pour garder les proportions)
+            priority // Important : charge le logo en priorité
+            className="h-auto w-auto" // Optionnel : garde le ratio si tu changes la taille CSS
+          />
+        </div>
+
+        <div className="mb-8 w-full flex flex-col justify-center items-center gap-8">
+          <h2 className="text-3xl font-bold text-[#E85D04] mb-2">{title}</h2>
+          {/* Le formulaire spécifique (Login ou Register) s'insère ici */}
+          <div className="w-full max-w-md">{children}</div>
+        </div>
+
+        <div className="mt-8 gap-2 flex text-[13px] text-gray-600">
+          {bottomText}{" "}
+          <Link
+            href={linkUrl}
+            className="text-[#E85D04] font-normal hover:underline"
+          >
+            {linkText}
+          </Link>
+        </div>
+      </div>
+
+      {/* --- CÔTÉ DROIT (Image) --- */}
+      {/* Hidden sur mobile, visible à partir de lg (large screens) */}
+      <div className="hidden lg:block w-1/1 relative bg-gray-100">
+        <Image
+          src={imageSrc}
+          alt="Illustration"
+          fill
+          className="object-cover"
+          priority // Important pour l'image au dessus de la ligne de flottaison
+        />
+      </div>
+    </div>
+  );
+}
