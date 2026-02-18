@@ -27,3 +27,9 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* Cache l'icône calendrier par défaut de Chrome/Safari/Edge */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}

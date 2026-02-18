@@ -89,9 +89,6 @@ export default function ModalModifyTask({
                         onChange={(e) => setDueDate(e.target.value)}
                         className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100"
                     />
-                    {/* Calendar icon absolute positioning might block click on date picker in some browsers, 
-                         but logic-wise it's decorative here if type=date has its own indicator. 
-                         Let's keep it but ensure pointer-events-none */}
                     <Calendar className="absolute right-3 top-2.5 text-gray-400 pointer-events-none" size={18} />
                 </div>
             </div>
@@ -104,8 +101,6 @@ export default function ModalModifyTask({
                 <div className="flex flex-wrap gap-2 mb-2">
                     {assignees.map(id => {
                         const member = members.find(m => m.id === id);
-                        // If not found in members (maybe unlinked user), show ID or nothing?
-                        // If member is not found but id exists, it might be safer to skip or show 'Unknown'.
                         if (!member) return null;
                         return (
                             <span
