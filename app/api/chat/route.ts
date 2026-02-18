@@ -51,7 +51,8 @@ export async function POST(req: Request) {
         const index = await VectorStoreIndex.fromDocuments(documents);
 
         // 3. Créer le moteur de recherche (Query Engine)
-        const queryEngine = index.asQueryEngine();
+        // On récupère plus de contexte (20 tâches) pour éviter les doublons
+        const queryEngine = index.asQueryEngine({ similarityTopK: 20 });
 
         // 4. Interroger le moteur
         const promptSystem = `
