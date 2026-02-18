@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthLayout from '@/app/components/authlayout/AuthLayout';
 import { authService } from '@/app/services/auth'; // Importe ton service
+import { useData } from '@/app/context/DataContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { refreshData } = useData();
 
   // États pour stocker les saisies
   const [email, setEmail] = useState('');
@@ -23,6 +25,9 @@ export default function LoginPage() {
     try {
       // Appel au backend via notre service
       await authService.login(email, password);
+
+      // On rafraîchit les données du contexte
+      await refreshData();
 
       // Si ça marche, on redirige vers le dashboard ou le profil
       router.push('/dashboard');

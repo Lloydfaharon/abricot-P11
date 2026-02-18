@@ -3,29 +3,31 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-    // On récupère le token dans les cookies
     const token = request.cookies.get('token')?.value;
 
-    // Définir les routes protégées
-    const protectedRoutes = ['/profile', '/dashboard'];
+    // Définir les routes publiques (ne nécessitant pas de connexion)
+    const publicRoutes = ['/login', '/register', '/'];
+    const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
 
-    // Vérifier si l'utilisateur est sur une route protégée
-    if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
-        if (!token) {
-            // Si pas de token, on redirige vers le login
-            return NextResponse.redirect(new URL('/login', request.url));
-        }
+    // Si l'utilisateur n'est pas connecté et essaie d'accéder à une route protégée
+    if (!token && !isPublicRoute) {
+        return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    // Inversement : si on est déjà connecté, on ne doit pas pouvoir retourner sur /login
-    if (request.nextUrl.pathname === '/login' && token) {
+    // Si l'utilisateur est connecté et essaie d'accéder aux pages de login/register
+    if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
     return NextResponse.next();
 }
 
-// Configurer sur quelles routes le middleware s'applique
 export const config = {
-    matcher: ['/profile/:path*', '/dashboard/:path*', '/login', '/register'],
+    // Matcher toutes les routes sauf :
+    // - api (les routes API)
+    // - _next/static (fichiers statiques)
+    // - _next/image (images optimisées)
+    // - favicon.ico (icône du site)
+    // - images (dossier public d'images)
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images).*)'],
 };

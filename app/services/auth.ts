@@ -1,7 +1,7 @@
 // app/services/auth.ts
 import Cookies from "js-cookie";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api"; // Mets l'URL de ton backend ici
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"; // Backend Django direct
 
 export const authService = {
   // Fonction de connexion
@@ -74,6 +74,30 @@ export const authService = {
           authService.logout();
         }
         throw new Error('Impossible de récupérer le profil');
+      }
+
+      const responseData = await response.json();
+      return responseData.data.user;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateProfile: async (data: { name?: string; email?: string; password?: string }) => {
+    const token = Cookies.get('token');
+    try {
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erreur lors de la mise à jour du profil");
       }
 
       const responseData = await response.json();
