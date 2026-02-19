@@ -17,6 +17,7 @@ interface GlobalData {
     createProject: (data: any) => Promise<void>;
     updateProject: (projectId: string, data: any) => Promise<void>;
     deleteTask: (projectId: string, taskId: string) => Promise<void>;
+    deleteProject: (projectId: string) => Promise<void>;
 }
 
 const DataContext = createContext<GlobalData>({
@@ -29,6 +30,7 @@ const DataContext = createContext<GlobalData>({
     createProject: async () => { },
     updateProject: async () => { },
     deleteTask: async () => { },
+    deleteProject: async () => { },
 });
 
 export const useData = () => useContext(DataContext);
@@ -169,12 +171,24 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const deleteProject = async (projectId: string) => {
+        try {
+            await projectService.deleteProject(projectId);
+            setProjects((prev) => prev.filter(p => p.id !== projectId));
+            toast.success("Projet supprimé avec succès");
+        } catch (error) {
+            console.error("Context: Erreur suppression projet:", error);
+            toast.error("Impossible de supprimer le projet");
+            throw error;
+        }
+    };
+
     useEffect(() => {
         refreshData();
     }, []);
 
     return (
-        <DataContext.Provider value={{ user, tasks, projects, loading, refreshData, createTask, createProject, updateProject, deleteTask }}>
+        <DataContext.Provider value={{ user, tasks, projects, loading, refreshData, createTask, createProject, updateProject, deleteTask, deleteProject }}>
             {children}
         </DataContext.Provider>
     );

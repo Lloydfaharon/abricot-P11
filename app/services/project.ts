@@ -139,5 +139,20 @@ export const projectService = {
         }
 
         return await response.json();
+    },
+
+    deleteProject: async (projectId: string): Promise<void> => {
+        const token = Cookies.get('token');
+        const response = await fetch(`${API_URL}/projects/${projectId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erreur lors de la suppression du projet: ${errorText}`);
+        }
     }
 };
