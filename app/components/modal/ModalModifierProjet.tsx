@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useData } from '@/app/context/DataContext';
 import { ProjectData } from '@/app/services/project';
 import { ChevronDown } from 'lucide-react';
+import ConfirmModal from '../ui/ConfirmModal';
 
 interface ModalModifierProjetProps {
     project: ProjectData;
@@ -173,40 +174,18 @@ export default function ModalModifierProjet({ project, onClose }: ModalModifierP
                 </button>
             </div>
 
-            {/* Custom Confirmation Modal (Centered Overlay) */}
-            {showDeleteConfirm && (
-                <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-6 text-center rounded-2xl animate-in fade-in zoom-in duration-200">
-                    <div className="bg-red-50 p-4 rounded-full mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
-                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Supprimer ce projet ?</h3>
-                    <p className="text-sm text-gray-500 mb-6 max-w-[300px]">
-                        Cette action est irréversible. Toutes les tâches et les données associées seront perdues définitivement.
-                    </p>
-                    <div className="flex gap-3 w-full justify-center">
-                        <button
-                            onClick={() => setShowDeleteConfirm(false)}
-                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                            Annuler
-                        </button>
-                        <button
-                            onClick={() => {
-                                deleteProject(project.id);
-                                if (onClose) onClose();
-                                window.location.href = "/projet";
-                            }}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-red-200"
-                        >
-                            Confirmer la suppression
-                        </button>
-                    </div>
-                </div>
-            )}
+            <ConfirmModal
+                isOpen={showDeleteConfirm}
+                title="Supprimer ce projet ?"
+                description="Cette action est irréversible. Toutes les tâches et les données associées seront perdues définitivement."
+                confirmText="Confirmer la suppression"
+                onConfirm={() => {
+                    deleteProject(project.id);
+                    if (onClose) onClose();
+                    window.location.href = "/projet";
+                }}
+                onCancel={() => setShowDeleteConfirm(false)}
+            />
         </div>
     );
 }

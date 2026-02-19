@@ -73,6 +73,8 @@ export default function TacheListeCard({
     const [submitting, setSubmitting] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // On garde l'état d'ouverture du menu pour gérer la vue "confirmation" dedans
+    const [menuMode, setMenuMode] = useState<'default' | 'confirm_delete'>('default');
     const menuRef = useRef<HTMLDivElement>(null);
 
     // État local pour les commentaires (affichage immédiat)
@@ -85,6 +87,7 @@ export default function TacheListeCard({
         const handleClickOutside = (event: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setIsMenuOpen(false);
+                setMenuMode('default'); // On reset si on ferme
             }
         };
 
@@ -113,15 +116,13 @@ export default function TacheListeCard({
     const userInitials = user?.name ? getUserInitials(user.name) : "MOI";
 
     const handleDeleteTask = async () => {
-        if (window.confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
-            try {
-                await deleteTask(projectId, id);
-                setIsMenuOpen(false);
-                if (onUpdate) onUpdate();
-            } catch (error) {
-                console.error("Erreur suppression:", error);
-                alert("Impossible de supprimer la tâche.");
-            }
+        try {
+            await deleteTask(projectId, id);
+            setIsMenuOpen(false);
+            if (onUpdate) onUpdate();
+        } catch (error) {
+            console.error("Erreur suppression:", error);
+            alert("Impossible de supprimer la tâche.");
         }
     };
 
@@ -181,8 +182,7 @@ export default function TacheListeCard({
             role="article"
             tabIndex={0}
             onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    // Open edit modal on Enter
+                if (e.key === 'Enter' && e.target === e.currentTarget) {
                     setIsModalOpen(true);
                 }
             }}
@@ -197,34 +197,63 @@ export default function TacheListeCard({
                     </span>
                 </div>
                 <div className="relative" ref={menuRef}>
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="h-8 w-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 bg-white">
+                    <button onClick={() => {
+                        setIsMenuOpen(!isMenuOpen);
+                        setMenuMode('default');
+                    }} className="h-8 w-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 bg-white">
                         <MoreHorizontal size={16} />
                     </button>
 
                     {isMenuOpen && (
                         <div className="absolute right-0 top-10 w-[400px] px-10 py-8 bg-white border border-gray-200 rounded-lg shadow-lg z-50 sm:w-[600px]">
-                            <div className="flex flex-col ">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
-                                <p className="text-sm text-gray-500 mb-8">{description}</p>
-                                <div className="flex items-center gap-3 text-sm font-medium">
-                                    <button
-                                        onClick={handleDeleteTask}
-                                        className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors"
-                                    >
-                                        <Trash2 size={16} />
-                                        Supprimer
-                                    </button>
-                                    <span className="text-gray-200 text-lg font-light">|</span>
-                                    <button onClick={() => {
-                                        setIsMenuOpen(false);
-                                        setIsModalOpen(true);
-                                    }} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors">
-                                        <Pencil size={16} />
-                                        Modifier
-                                    </button>
+                            {menuMode === 'default' ? (
+                                <div className="flex flex-col ">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
+                                    <p className="text-sm text-gray-500 mb-8">{description}</p>
+                                    <div className="flex items-center gap-3 text-sm font-medium">
+                                        <button
+                                            onClick={() => setMenuMode('confirm_delete')}
+                                            className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors"
+                                        >
+                                            <Trash2 size={16} />
+                                            Supprimer
+                                        </button>
+                                        <span className="text-gray-200 text-lg font-light">|</span>
+                                        <button onClick={() => {
+                                            setIsMenuOpen(false);
+                                            setIsModalOpen(true);
+                                        }} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors">
+                                            <Pencil size={16} />
+                                            Modifier
+                                        </button>
 
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="flex flex-col items-center text-center animate-in fade-in zoom-in duration-200">
+                                    <div className="bg-red-50 p-3 rounded-full mb-3 text-red-600">
+                                        <Trash2 size={24} />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2">Supprimer cette tâche ?</h3>
+                                    <p className="text-sm text-gray-500 mb-6">
+                                        Cette action est irréversible.
+                                    </p>
+                                    <div className="flex gap-3 w-full justify-center">
+                                        <button
+                                            onClick={() => setMenuMode('default')}
+                                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors"
+                                        >
+                                            Annuler
+                                        </button>
+                                        <button
+                                            onClick={handleDeleteTask}
+                                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-red-200"
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
