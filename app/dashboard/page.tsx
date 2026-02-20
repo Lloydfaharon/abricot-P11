@@ -23,10 +23,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="w-full md:w-auto flex-shrink-0">
+        <div className="w-full md:w-auto shrink-0">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-black text-white font-medium rounded-[12px] hover:bg-gray-800 transition-all w-full md:w-[185px] h-[52px] shadow-sm active:scale-95 flex items-center justify-center"
+            className="bg-black text-white font-medium rounded-xl hover:bg-gray-800 transition-all w-full md:w-46.25 h-13 shadow-sm active:scale-95 flex items-center justify-center"
           >
             + Créer un projet
           </button>
