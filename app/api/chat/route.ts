@@ -3,7 +3,7 @@ import { Document, VectorStoreIndex, Settings } from "llamaindex";
 import { MistralAI, MistralAIEmbedding, MistralAIEmbeddingModelType } from "@llamaindex/mistral";
 import { z } from "zod";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.API_BACKEND_URL || "http://localhost:8000";
 
 export async function POST(req: NextRequest) {
     try {
@@ -14,8 +14,7 @@ export async function POST(req: NextRequest) {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-            const baseUrl = API_URL.startsWith('http') ? API_URL : `${req.nextUrl.origin}${API_URL}`;
+            const baseUrl = API_URL;
 
             const authResponse = await fetch(`${baseUrl}/auth/profile`, {
                 method: "GET",
