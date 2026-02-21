@@ -33,7 +33,7 @@ export default function ConfirmModal({
                 </svg>
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-            <p className="text-sm text-gray-500 mb-6 max-w-[300px]">
+            <p className="text-sm text-gray-500 mb-6 max-w-75">
                 {description}
             </p>
             <div className="flex gap-3 w-full justify-center">

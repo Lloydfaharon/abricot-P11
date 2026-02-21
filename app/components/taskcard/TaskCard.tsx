@@ -89,32 +89,32 @@ export default function TaskCard({
     status,
 }: TaskCardProps) {
     return (
-        <div className="w-full h-auto lg:h-[180px] rounded-2xl border border-gray-200 bg-white px-5 py-5 lg:px-7 lg:py-6 flex flex-col justify-center transition-all hover:shadow-md">
+        <div className="w-full h-auto lg:h-45 rounded-2xl border border-gray-200 bg-white px-5 py-5 lg:px-7 lg:py-6 flex flex-col justify-center transition-all hover:shadow-md">
             <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6 w-full">
                 {/* Left */}
                 <div className="min-w-0 flex flex-col gap-3 lg:gap-4 w-full sm:w-auto flex-1">
                     <div>
-                        <h3 className="text-[16px] lg:text-[18px] font-semibold text-gray-900 leading-tight">{title}</h3>
+                        <h2 className="text-base lg:text-lg font-semibold text-gray-900 leading-tight">{title}</h2>
                         <p className="mt-1 text-sm text-gray-400 line-clamp-2">{description}</p>
                     </div>
 
                     <div className="mt-3 lg:mt-5 flex flex-wrap items-center gap-y-2 gap-x-3 text-sm text-gray-500">
                         <div className="flex items-center gap-2">
-                            <IconFolder className="h-[16px] w-[16px] lg:h-[18px] lg:w-[18px]" />
-                            <span className="truncate max-w-[120px] sm:max-w-[200px]">{projectName}</span>
+                            <IconFolder className="h-4 w-4 lg:h-4.5 lg:w-4.5" />
+                            <span className="truncate max-w-30 sm:max-w-50">{projectName}</span>
                         </div>
 
                         <span className="text-gray-200 hidden sm:inline">|</span>
 
                         <div className="flex items-center gap-2">
-                            <IconCalendar className="h-[16px] w-[16px] lg:h-[18px] lg:w-[18px]" />
+                            <IconCalendar className="h-4 w-4 lg:h-4.5 lg:w-4.5" />
                             <span>{dateLabel}</span>
                         </div>
 
                         <span className="text-gray-200 hidden sm:inline">|</span>
 
                         <div className="flex items-center gap-2">
-                            <IconMessage className="h-[16px] w-[16px] lg:h-[18px] lg:w-[18px]" />
+                            <IconMessage className="h-4 w-4 lg:h-4.5 lg:w-4.5" />
                             <span>{commentsCount}</span>
                         </div>
                     </div>

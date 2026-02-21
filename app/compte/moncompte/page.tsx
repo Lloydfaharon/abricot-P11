@@ -11,7 +11,13 @@ export default function MonCompte() {
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const [isPasswordAccordionOpen, setIsPasswordAccordionOpen] = useState(false);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -31,7 +37,6 @@ export default function MonCompte() {
         setIsSubmitting(true);
         setMessage(null);
         try {
-            // Reconstruction du nom complet
             const fullName = `${firstName} ${lastName}`.trim();
 
             const payload: any = {
@@ -39,15 +44,35 @@ export default function MonCompte() {
                 email: email
             };
 
-            // Envoi du mot de passe uniquement si modifié
-            if (password) {
-                payload.password = password;
+            // 1. Mise à jour du profil (Nom, Email)
+            await authService.updateProfile(payload);
+
+            // 2. Mise à jour du mot de passe (si demandé)
+            if (currentPassword || newPassword || confirmPassword) {
+                if (!currentPassword) throw new Error("Veuillez saisir votre mot de passe actuel.");
+                if (newPassword !== confirmPassword) throw new Error("Les nouveaux mots de passe ne correspondent pas.");
+
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+                if (!passwordRegex.test(newPassword)) {
+                    throw new Error("Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.");
+                }
+                if (currentPassword === newPassword) {
+                    throw new Error("Le nouveau mot de passe doit être différent de l'actuel.");
+                }
+
+                await authService.updatePassword({
+                    currentPassword,
+                    newPassword
+                });
             }
 
-            await authService.updateProfile(payload);
-            await refreshData(); // Rafraîchissement des données
+            await refreshData();
             setMessage({ type: 'success', text: "Informations mises à jour avec succès !" });
-            setPassword(""); // Réinitialisation du champ mot de passe
+
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setIsPasswordAccordionOpen(false);
         } catch (error: any) {
             console.error("Erreur mise à jour profil:", error);
             setMessage({ type: 'error', text: error.message || "Erreur lors de la mise à jour." });
@@ -68,10 +93,12 @@ export default function MonCompte() {
             <div className="space-y-6">
                 {/* Prénom */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">Prénom</label>
+                    <label htmlFor="firstName" className="text-sm font-medium text-gray-900">Prénom</label>
                     <input
                         type="text"
                         value={firstName}
+                        id="firstName"
+                        name="firstName"
                         onChange={(e) => setFirstName(e.target.value)}
                         className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300"
                         placeholder="Votre prénom"
@@ -80,10 +107,12 @@ export default function MonCompte() {
 
                 {/* Nom */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">Nom</label>
+                    <label htmlFor="lastName" className="text-sm font-medium text-gray-900">Nom</label>
                     <input
                         type="text"
                         value={lastName}
+                        id="lastName"
+                        name="lastName"
                         onChange={(e) => setLastName(e.target.value)}
                         className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300"
                         placeholder="Votre nom"
@@ -92,32 +121,73 @@ export default function MonCompte() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">Email</label>
+                    <label htmlFor="email" className="text-sm font-medium text-gray-900">Email</label>
                     <input
                         type="email"
                         value={email}
+                        id="email"
+                        name="email"
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300"
                         placeholder="nom@exemple.com"
                     />
                 </div>
 
-                {/* Mot de passe */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">Mot de passe</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300 tracking-widest"
-                        placeholder="••••••••••••"
-                    />
+                {/* Section Sécurité : Mot de passe (Accordéon) */}
+                <div className="pt-6 space-y-4">
+                    <div className="space-y-2">
+                        <div className="flex flex-col">
+                            <label htmlFor="currentPassword" className="text-sm font-medium text-gray-900">Mot de passe</label>
+                            <span className="text-xs text-gray-400">Laissez vide pour conserver l'actuel.</span>
+                        </div>
+                        <input
+                            type="password"
+                            value={currentPassword}
+                            id="currentPassword"
+                            name="currentPassword"
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            onFocus={() => setIsPasswordAccordionOpen(true)}
+                            className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300 tracking-widest cursor-pointer"
+                            placeholder="••••••••••••"
+                            autoComplete="new-password"
+                        />
+                    </div>
+
+                    {isPasswordAccordionOpen && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="space-y-2">
+                                <label htmlFor="newPassword" className="text-sm font-medium text-gray-900">Nouveau mot de passe</label>
+                                <input
+                                    type="password"
+                                    value={newPassword}
+                                    id="newPassword"
+                                    name="newPassword"
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300 tracking-widest"
+                                    placeholder="••••••••••••"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">8 caractères min, 1 majuscule, 1 minuscule, 1 chiffre</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-900">Confirmer le nouveau</label>
+                                <input
+                                    type="password"
+                                    value={confirmPassword}
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="w-full h-12 px-4 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300 tracking-widest"
+                                    placeholder="••••••••••••"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Feedback Message */}
                 {message && (
-                    <div className={`p-4 rounded-md text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-                        }`}>
+                    <div className={`p-4 rounded-md text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                         {message.text}
                     </div>
                 )}
@@ -133,8 +203,7 @@ export default function MonCompte() {
                     </button>
                     <button
                         onClick={authService.logout}
-                        className='flex items-center gap-2  rounded-md cursor-pointer hover:text-orange-600 transition-colors'
-
+                        className='flex items-center gap-2 rounded-md cursor-pointer hover:text-orange-600 transition-colors'
                     >
                         Se deconnecter
                         <LogOut className="ml-2 h-4 w-4" />

@@ -22,9 +22,9 @@ export default function AuthLayout({
   linkUrl,
 }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen w-full bg-white">
+    <div className="flex min-h-screen w-full bg-gray-100">
       {/* --- CÔTÉ GAUCHE (Formulaire) --- */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-40 justify-center items-center px-8 sm:px-12 lg:px-35 py-12">
+      <main className=" lg:w-150 w-full  flex flex-col gap-12 md:gap-24 justify-center items-center lg:gap-40  px-8 sm:px-12 lg:px-10 py-12">
         {/* Logo ABRICOT */}
         <div className="mb-12">
           <Image
@@ -38,21 +38,21 @@ export default function AuthLayout({
         </div>
 
         <div className="mb-8 w-full flex flex-col justify-center items-center gap-8">
-          <h2 className="text-3xl font-bold text-[#E85D04] mb-2">{title}</h2>
+          <h1 className="text-3xl font-bold text-orange-500 mb-2">{title}</h1>
           {/* Le formulaire spécifique (Login ou Register) s'insère ici */}
           <div className="w-full max-w-md">{children}</div>
         </div>
 
-        <div className="mt-8 gap-2 flex text-[13px] text-gray-600">
+        <div className="mt-8 gap-2 flex text-sm text-black">
           {bottomText}{" "}
           <Link
             href={linkUrl}
-            className="text-[#E85D04] font-normal hover:underline"
+            className="text-orange-500 font-normal hover:underline"
           >
             {linkText}
           </Link>
         </div>
-      </div>
+      </main>
 
       {/* --- CÔTÉ DROIT (Image) --- */}
       {/* Hidden sur mobile, visible à partir de lg (large screens) */}
@@ -61,6 +61,7 @@ export default function AuthLayout({
           src={imageSrc}
           alt="Illustration"
           fill
+          sizes="(max-width: 1024px) 0vw, 50vw"
           className="object-cover"
           priority // Important pour l'image au dessus de la ligne de flottaison
         />

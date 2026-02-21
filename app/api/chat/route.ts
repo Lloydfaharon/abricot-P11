@@ -1,100 +1,113 @@
-
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Document, VectorStoreIndex, Settings } from "llamaindex";
 import { MistralAI, MistralAIEmbedding, MistralAIEmbeddingModelType } from "@llamaindex/mistral";
+import { z } from "zod";
 
-export async function POST(req: Request) {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+export async function POST(req: NextRequest) {
     try {
-        const { demandeUtilisateur, tachesExistantes } = await req.json();
+        const token = req.cookies.get("token")?.value || req.headers.get("Authorization")?.split(" ")[1];
 
-        if (!demandeUtilisateur) {
-            return NextResponse.json(
-                { message: "La demande utilisateur est requise" },
-                { status: 400 }
-            );
+        if (!token) return NextResponse.json({ message: "Non autorisé" }, { status: 401 });
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const baseUrl = API_URL.startsWith('http') ? API_URL : `${req.nextUrl.origin}${API_URL}`;
+
+            const authResponse = await fetch(`${baseUrl}/auth/profile`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (authResponse.status === 401) {
+                return NextResponse.json({ message: "Session expirée" }, { status: 401 });
+            }
+
+            if (!authResponse.ok) {
+                const text = await authResponse.text();
+                throw new Error(`Django error: ${authResponse.status} ${text}`);
+            }
+
+        } catch (e: any) {
+            console.error("Fetch profile error:", e);
+            const msg = e.name === 'AbortError' ? "Serveur d'auth trop lent" : "Erreur auth";
+            return NextResponse.json({ message: msg }, { status: 503 });
         }
+
+
+        const { demandeUtilisateur, tachesExistantes = [] } = await req.json();
+        if (!demandeUtilisateur) return NextResponse.json({ message: "Demande requise" }, { status: 400 });
 
         const apiKey = process.env.MISTRAL_API_KEY;
-        if (!apiKey) {
-            return NextResponse.json(
-                { message: "Clé API Mistral manquante" },
-                { status: 500 }
-            );
-        }
 
-        // Configuration de LlamaIndex pour utiliser Mistral (LLM et Embeddings)
         Settings.llm = new MistralAI({
-            apiKey: apiKey,
+            apiKey,
             model: "mistral-small-latest",
-            additionalKwargs: { response_format: { type: "json_object" } } // Force le JSON
+            additionalKwargs: { response_format: { type: "json_object" } }
         } as any);
 
         Settings.embedModel = new MistralAIEmbedding({
-            apiKey: apiKey,
+            apiKey,
             model: MistralAIEmbeddingModelType.MISTRAL_EMBED
         });
 
-        // 1. Créer des Documents à partir des tâches existantes
-        // Transformer les tâches en format texte pour l'indexation
-        const documents = (tachesExistantes || []).map((t: any) => new Document({
-            text: `Titre: ${t.title}, Statut: ${t.status || 'TODO'}, Description: ${t.description || ''}`,
-            metadata: { id: t.id, title: t.title }
+        const documents = tachesExistantes.map((t: any) => new Document({
+            text: `Tâche: ${t.title}. Description: ${t.description || ''}`,
+            metadata: { id: t.id }
         }));
 
-        // Si aucun document, on en crée un factice pour permettre la création de l'index
-        if (documents.length === 0) {
-            documents.push(new Document({ text: "Aucune tâche existante." }));
-        }
+        if (documents.length === 0) documents.push(new Document({ text: "Aucune tâche." }));
 
-        // 2. Créer le VectorStoreIndex (RAG)
-        // Cela indexe les documents en mémoire pour la récupération
         const index = await VectorStoreIndex.fromDocuments(documents);
-
-        // 3. Créer le moteur de recherche (Query Engine)
-        // On récupère plus de contexte (20 tâches) pour éviter les doublons
         const queryEngine = index.asQueryEngine({ similarityTopK: 20 });
 
-        // 4. Interroger le moteur
         const promptSystem = `
-      Tu es un expert en gestion de projet.
-      Génère une liste de NOUVELLES tâches pour répondre à : "${demandeUtilisateur}".
-      Ta réponse doit compléter le projet sans créer de doublons avec les tâches contextuelles.
-      Réponds UNIQUEMENT avec un tableau JSON d'objets.
-      Chaque objet doit avoir : "name" (titre) et "description".
-      Le format doit être un tableau JSON valide, sans texte avant ni après.
-      Exemple : [{"name": "...", "description": "..."}]
-    `;
+        Tu es un expert en gestion de projet.
+        Génère une liste de NOUVELLES tâches pour répondre à : "${demandeUtilisateur}".
+        Ta réponse doit compléter le projet sans créer de doublons avec les tâches contextuelles.
+        Réponds UNIQUEMENT avec un tableau JSON d'objets.
+        Chaque objet doit avoir : "name" (titre) et "description".
+        Le format doit être un tableau JSON valide, sans texte avant ni après.
+        Exemple : [{"name": "...", "description": "..."}]
+        `;
 
-        const response = await queryEngine.query({
-            query: promptSystem,
-        });
+        const response = await queryEngine.query({ query: promptSystem });
+        let content = response.toString();
 
-        const content = response.toString();
-
-        // Analyse du JSON
         let tasks;
         try {
-            // Nettoyer les blocs de code si du markdown standard est retourné
-            const cleanContent = content.replace(/```json/g, '').replace(/```/g, '').trim();
-            tasks = JSON.parse(cleanContent);
+            const cleanContent = content.replace(/```json|```/g, '').trim();
+            const parsed = JSON.parse(cleanContent);
+            const rawTasks = Array.isArray(parsed) ? parsed : (parsed.tasks || []);
 
-            if (tasks.tasks && Array.isArray(tasks.tasks)) {
-                tasks = tasks.tasks;
-            }
-        } catch (e) {
-            console.error("Erreur parsing JSON IA:", e);
-            // Fallback : Retourner le texte brut si l'analyse échoue (debug)
-            console.log("Raw Content:", content);
-            return NextResponse.json({ message: "Format de réponse invalide de l'IA" }, { status: 500 });
+            const TaskSchema = z.object({
+                name: z.string().min(1, "Le nom de la tâche est requis"),
+                description: z.string().optional().default("")
+            });
+            const TaskArraySchema = z.array(TaskSchema);
+
+            tasks = TaskArraySchema.parse(rawTasks);
+
+        } catch (e: any) {
+            console.error("Erreur de validation JSON/Zod:", e);
+            return NextResponse.json(
+                { message: "Erreur de format de la réponse IA", details: e.errors || "Format JSON invalide", raw: content },
+                { status: 500 }
+            );
         }
 
         return NextResponse.json(tasks);
 
     } catch (error: any) {
-        console.error("Erreur API Chat (LlamaIndex):", error);
-        return NextResponse.json(
-            { message: error.message || "Erreur interne" },
-            { status: 500 }
-        );
+        return NextResponse.json({ message: error.message }, { status: 500 });
     }
 }

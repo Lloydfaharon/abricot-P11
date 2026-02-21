@@ -19,6 +19,16 @@ export default function Modal({
     React.useEffect(() => {
         if (!isOpen) return;
 
+        // Focus initial de la modale pour capturer l'utilisateur dès l'ouverture
+        const initFocusableElements = modalRef.current?.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (initFocusableElements && initFocusableElements.length > 0) {
+            setTimeout(() => {
+                (initFocusableElements[0] as HTMLElement).focus();
+            }, 10);
+        }
+
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 onClose();
@@ -31,6 +41,13 @@ export default function Modal({
                 if (focusableElements && focusableElements.length > 0) {
                     const firstElement = focusableElements[0] as HTMLElement;
                     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+                    // Si le focus actif n'est plus dans la modale, on le ramène au premier élément
+                    if (!modalRef.current?.contains(document.activeElement)) {
+                        firstElement.focus();
+                        e.preventDefault();
+                        return;
+                    }
 
                     if (e.shiftKey) { // Shift + Tab
                         if (document.activeElement === firstElement) {
@@ -85,7 +102,7 @@ export default function Modal({
             {/* Modal */}
             <div
                 ref={modalRef}
-                className="relative z-10 rounded-2xl bg-white p-6 shadow-xl px-6 py-8 md:px-[73px] md:py-[79px] max-h-[90vh] overflow-y-auto max-w-[95vw] md:max-w-auto"
+                className="relative z-10 rounded-2xl bg-white p-6 shadow-xl px-6 py-12 md:px-18 md:py-20 max-h-[90vh] overflow-y-auto max-w-[95vw] md:max-w-auto"
             >
                 <button
                     className="absolute top-4 right-4 md:top-10 md:right-10 text-gray-500 hover:text-gray-800 transition-colors outline-none focus:ring-2 focus:ring-orange-200 rounded-full p-1"

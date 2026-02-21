@@ -71,12 +71,13 @@ export default function ModalModifierProjet({ project, onClose }: ModalModifierP
     };
 
     return (
-        <div className="flex flex-col w-full md:w-[598px] gap-6 pt-2 relative">
+        <div className="flex flex-col w-full md:w-149.5 gap-6 pt-2 relative">
 
             {/* Titre Input */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Titre*</label>
+                <label htmlFor="modif-projet-title" className="text-sm font-medium text-gray-900">Titre*</label>
                 <input
+                    id="modif-projet-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -86,8 +87,9 @@ export default function ModalModifierProjet({ project, onClose }: ModalModifierP
 
             {/* Description Input */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Description*</label>
+                <label htmlFor="modif-projet-desc" className="text-sm font-medium text-gray-900">Description*</label>
                 <input
+                    id="modif-projet-desc"
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -97,7 +99,7 @@ export default function ModalModifierProjet({ project, onClose }: ModalModifierP
 
             {/* Contributeurs */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Contributeurs</label>
+                <label htmlFor="modif-projet-contributors" className="text-sm font-medium text-gray-900">Contributeurs</label>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-2 empty:hidden">
@@ -130,6 +132,7 @@ export default function ModalModifierProjet({ project, onClose }: ModalModifierP
 
                 <div className="relative">
                     <select
+                        id="modif-projet-contributors"
                         className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm text-gray-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-100 bg-white appearance-none"
                         value=""
                         onChange={(e) => {

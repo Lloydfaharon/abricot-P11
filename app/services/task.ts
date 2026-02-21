@@ -2,7 +2,7 @@
 
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export interface AssignedTask {
     id: string;
@@ -39,7 +39,9 @@ export const taskService = {
             const responseData = await response.json();
             return responseData.data.tasks;
         } catch (error) {
-            console.error('Error fetching assigned tasks:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Error fetching assigned tasks:', error);
+            }
             throw error;
         }
     },
@@ -80,7 +82,9 @@ export const taskService = {
             });
 
         } catch (error) {
-            console.error('Error fetching project tasks:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Error fetching project tasks:', error);
+            }
             return [];
         }
     },
@@ -99,13 +103,17 @@ export const taskService = {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`API Error (${response.status}):`, errorText);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.error(`API Error (${response.status}):`, errorText);
+                }
                 throw new Error(`Impossible d'ajouter le commentaire: ${response.status} ${errorText}`);
             }
 
             return await response.json();
         } catch (error) {
-            console.error('Error adding comment:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Error adding comment:', error);
+            }
             throw error;
         }
     },
@@ -126,13 +134,17 @@ export const taskService = {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`API Error (${response.status}):`, errorText);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.error(`API Error (${response.status}):`, errorText);
+                }
                 throw new Error(`Impossible de créer la tâche: ${response.status} ${errorText}`);
             }
 
             return await response.json();
         } catch (error) {
-            console.error('Error creating task:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Error creating task:', error);
+            }
             throw error;
         }
     },
@@ -153,13 +165,17 @@ export const taskService = {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`API Error (${response.status}):`, errorText);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.error(`API Error (${response.status}):`, errorText);
+                }
                 throw new Error(`Impossible de modifier la tâche: ${response.status} ${errorText}`);
             }
 
             return await response.json();
         } catch (error) {
-            console.error('Error updating task:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Error updating task:', error);
+            }
             throw error;
         }
     },
@@ -178,11 +194,15 @@ export const taskService = {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`API Error (${response.status}):`, errorText);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.error(`API Error (${response.status}):`, errorText);
+                }
                 throw new Error(`Impossible de supprimer la tâche: ${response.status} ${errorText}`);
             }
         } catch (error) {
-            console.error('Error deleting task:', error);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Error deleting task:', error);
+            }
             throw error;
         }
     }

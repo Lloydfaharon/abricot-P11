@@ -24,7 +24,6 @@ export default function ProjectDetailPage() {
     type ModalType = "CREATE" | "MODIFIER" | "IA" | null;
     const [activeModal, setActiveModal] = useState<ModalType>(null);
 
-    // État local pour les tâches DU PROJET (et pas seulement les assignées)
     const [localTasks, setLocalTasks] = useState<AssignedTask[]>([]);
 
     const projectId = params.id as string;
@@ -32,12 +31,12 @@ export default function ProjectDetailPage() {
     const fetchProjectTasks = useCallback(async () => {
         if (!projectId) return;
         try {
-            console.log("Page: Fetching tasks for project:", projectId);
             const fetched = await taskService.getProjectTasks(projectId);
-            console.log("Page: Fetched tasks:", fetched.length);
             setLocalTasks(fetched);
         } catch (e) {
-            console.error("Page: Error fetching tasks", e);
+            if (process.env.NODE_ENV !== 'production') {
+                console.error("Page: Error fetching tasks", e);
+            }
         }
     }, [projectId]);
 
@@ -81,9 +80,9 @@ export default function ProjectDetailPage() {
         <div className="relative">
             <Link
                 href="/projet"
-                className="inline-flex items-center text-sm text-gray-400 hover:text-orange-500 mb-6 transition-colors md:absolute md:top-0 md:-left-15"
+                className="inline-flex items-center text-sm text-gray-400 hover:text-orange-500 mb-6 transition-colors md:absolute md:top-0 md:-left-[60px]"
             >
-                <div className="bg-white rounded-md  h-12.5 w-12.5 flex justify-center items-center border border-gray-300 hover:border-orange-500">
+                <div className="bg-white rounded-md  h-[52px] w-[52px] flex justify-center items-center border border-gray-300 hover:border-orange-500">
                     ←
                 </div>
             </Link>
@@ -94,7 +93,7 @@ export default function ProjectDetailPage() {
                             {project.title}
                         </h1>
                         {canEdit && (
-                            <button onClick={() => setActiveModal("MODIFIER")} className="text-[14px] text-orange-500 cursor-pointer bg-transparent border-none outline-none hover:underline focus:ring-2 focus:ring-orange-200 rounded px-1">
+                            <button onClick={() => setActiveModal("MODIFIER")} className="text-sm text-orange-500 cursor-pointer bg-transparent border-none outline-none hover:underline focus:ring-2 focus:ring-orange-200 rounded px-1">
                                 Modifier
                             </button>
                         )}
@@ -102,10 +101,10 @@ export default function ProjectDetailPage() {
 
                     <p className="mt-2 text-gray-500">{project.description}</p>
                 </div>
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                    <button onClick={() => setActiveModal("CREATE")} className="bg-black text-[16px] text-white w-full md:w-35.25 h-12.5 rounded-[10px] cursor-pointer">Créer une tâche</button>
-                    <button onClick={() => setActiveModal("IA")} className=" flex items-center gap-2  justify-center bg-orange-500 text-[16px] text-white w-23.5 h-12.5 rounded-[10px] cursor-pointer"><Image
-                        src="/images/star 1.svg"
+                <div className="flex gap-4 w-full md:w-auto">
+                    <button onClick={() => setActiveModal("CREATE")} className="bg-black text-base text-white w-full md:w-[141px] h-[52px] rounded-xl cursor-pointer">Créer une tâche</button>
+                    <button onClick={() => setActiveModal("IA")} className=" flex items-center gap-2  justify-center bg-orange-500 text-base text-white w-full md:w-[94px] h-[52px] rounded-xl cursor-pointer"><Image
+                        src="/images/star1.svg"
                         alt="Liste"
                         width={20}
                         height={20}
@@ -114,7 +113,7 @@ export default function ProjectDetailPage() {
                 </div>
             </div>
             {/* Section Contributeurs */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-100 rounded-[10px] px-4 py-4 md:px-8 mb-8 border border-gray-100 mt-8 md:mt-15">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-100 rounded-xl px-4 py-4 md:px-8 mb-8 border border-gray-100 mt-8 md:mt-[60px]">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-gray-900">Contributeurs</span>
@@ -127,24 +126,20 @@ export default function ProjectDetailPage() {
                         {(() => {
                             const uniqueTeam = new Map();
                             project.team?.forEach(m => {
-                                const current = uniqueTeam.get(m.id);
-                                // On ajoute si pas présent, ou si le nouveau a le rôle 'Propriétaire' (prioritaire)
-                                if (!current || m.role === 'Propriétaire') {
+                                if (!uniqueTeam.get(m.id) || m.role === 'Propriétaire') {
                                     uniqueTeam.set(m.id, m);
                                 }
                             });
 
                             return Array.from(uniqueTeam.values()).map((member: any, idx) => (
                                 <div key={member.id || idx} className="flex items-center gap-2" title={member.name}>
-                                    {/* Avatar Circle */}
-                                    <span className={`flex h-10 w-10 md:h-8 md:w-8 items-center justify-center rounded-full text-[12px] md:text-[10px] font-bold ${member.role === 'Propriétaire'
+                                    <span className={`flex h-10 w-10 md:h-8 md:w-8 items-center justify-center rounded-full text-xs md:text-[11px] font-bold ${member.role === 'Propriétaire'
                                         ? 'bg-orange-100 text-gray-800'
                                         : 'bg-white border border-gray-200 text-gray-800'
                                         }`}>
                                         {member.initials}
                                     </span>
 
-                                    {/* Name/Role Pill - Hidden on mobile */}
                                     <div className={`hidden md:block px-4 py-1.5 rounded-full text-sm font-medium ${member.role === 'Propriétaire'
                                         ? 'bg-orange-100 text-orange-600'
                                         : 'bg-white border border-gray-200 text-gray-600'
@@ -163,9 +158,9 @@ export default function ProjectDetailPage() {
 
                 <div >
                     <div className=" flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 ">
-                        <div>
-                            <h2 className="text-[20px] font-bold">Taches</h2>
-                            <p className="text-[16px] text-gray-500">Par ordre de priorité</p>
+                        <div className="mb-8">
+                            <h2 className="text-xl font-bold">Taches</h2>
+                            <p className="text-base text-gray-500">Par ordre de priorité</p>
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center mt-6 w-full xl:w-auto">
@@ -180,7 +175,7 @@ export default function ProjectDetailPage() {
                                 >
                                     <Image
                                         src="/images/Group-4.svg"
-                                        alt="Liste"
+                                        alt="image de la Liste"
                                         width={20}
                                         height={20}
 
@@ -199,7 +194,7 @@ export default function ProjectDetailPage() {
                                         alt="Kanban"
                                         width={20}
                                         height={20}
-
+                                        className="w-auto h-auto"
                                     />
                                     Calendrier
                                 </button>
@@ -226,6 +221,7 @@ export default function ProjectDetailPage() {
                                 <div className="relative w-full md:w-auto">
                                     <input
                                         type="text"
+                                        aria-label="Rechercher une tâche"
                                         placeholder="Rechercher une tâche"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -242,7 +238,6 @@ export default function ProjectDetailPage() {
 
 
                     <div className="mt-6">
-                        {/* Vue LISTE */}
                         {viewMode === 'list' && (
                             <div className="flex flex-col gap-4">
                                 {(() => {
@@ -264,8 +259,6 @@ export default function ProjectDetailPage() {
                                         return true;
                                     });
 
-                                    console.log("Page: Tasks after filter:", projectTasks.length);
-
                                     if (projectTasks.length === 0) {
                                         return (
                                             <div className="text-gray-500 text-sm italic py-4">
@@ -274,7 +267,6 @@ export default function ProjectDetailPage() {
                                         );
                                     }
 
-                                    // Tri par priorité
                                     projectTasks.sort((a, b) => {
                                         const priorityWeight: Record<string, number> = {
                                             "HIGH": 3,
@@ -300,21 +292,17 @@ export default function ProjectDetailPage() {
                                             description={task.description || "Aucune description"}
                                             dueDate={task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}
                                             assignees={task.assignees?.map((a: any) => {
-                                                // Gestion des différents formats (ID string ou Objet User)
                                                 let userName = "Inconnu";
                                                 let initials = "??";
 
                                                 if (typeof a === 'string') {
-                                                    // C'est un ID, on cherche dans l'équipe du projet
                                                     const member = project?.team?.find(m => m.id === a);
                                                     if (member) {
                                                         userName = member.name;
                                                         initials = member.initials;
                                                     }
                                                 } else {
-                                                    // C'est un objet
                                                     userName = a.user?.name || a.name || "Inconnu";
-                                                    // Recalcul des initiales si non présentes
                                                     const parts = userName.trim().split(' ');
                                                     initials = parts.length === 1
                                                         ? parts[0].substring(0, 2).toUpperCase()
@@ -339,12 +327,9 @@ export default function ProjectDetailPage() {
                             </div>
                         )}
 
-                        {/* Vue CALENDRIER */}
                         {viewMode === 'calendar' && (
                             <div className="flex flex-col gap-8">
                                 {(() => {
-                                    console.log("Page: Rendering LOCAL tasks list. Total loaded:", localTasks.length);
-
                                     const projectTasks = localTasks
                                         .filter(t => {
                                             const currentId = (t as any).projectId || t.project?.id;
@@ -362,7 +347,6 @@ export default function ProjectDetailPage() {
 
                                             return true;
                                         })
-                                        // TRI : Par priorité (HIGH > MEDIUM > LOW)
                                         .sort((a: any, b: any) => {
                                             const priorityWeight: Record<string, number> = {
                                                 "HIGH": 3,
@@ -374,7 +358,6 @@ export default function ProjectDetailPage() {
                                             return wB - wA; // Descending
                                         });
 
-                                    console.log("Page: Tasks after filter & sort:", projectTasks.length);
                                     if (projectTasks.length === 0) {
                                         return (
                                             <div className="text-gray-500 text-sm italic py-4">
@@ -383,7 +366,6 @@ export default function ProjectDetailPage() {
                                         );
                                     }
 
-                                    // Groupement par date pour l'affichage
                                     const groups = projectTasks.reduce((acc, task) => {
                                         const rawDate = task.dueDate ? new Date(task.dueDate).getTime() : 9999999999999;
                                         const dateLabel = task.dueDate ? new Date(task.dueDate).toLocaleDateString('fr-FR', {
@@ -439,19 +421,16 @@ export default function ProjectDetailPage() {
                                                         description={task.description || "Aucune description"}
                                                         dueDate={task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}
                                                         assignees={task.assignees?.map((a: any) => {
-                                                            // Gestion des différents formats (ID string ou Objet User)
                                                             let userName = "Inconnu";
                                                             let initials = "??";
 
                                                             if (typeof a === 'string') {
-                                                                // C'est un ID, on cherche dans l'équipe du projet
                                                                 const member = project?.team?.find(m => m.id === a);
                                                                 if (member) {
                                                                     userName = member.name;
                                                                     initials = member.initials;
                                                                 }
                                                             } else {
-                                                                // C'est un objet
                                                                 userName = a.user?.name || a.name || "Inconnu";
                                                                 const parts = userName.trim().split(' ');
                                                                 initials = parts.length === 1
@@ -499,7 +478,9 @@ export default function ProjectDetailPage() {
                             await fetchProjectTasks();
                             setActiveModal(null);
                         } catch (error) {
-                            console.error("Erreur création tâche:", error);
+                            if (process.env.NODE_ENV !== 'production') {
+                                console.error("Erreur création tâche:", error);
+                            }
                             alert("Erreur lors de la création de la tâche");
                         }
                     }} />

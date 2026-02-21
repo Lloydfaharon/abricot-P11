@@ -56,11 +56,12 @@ export default function ModalModifyTask({
     };
 
     return (
-        <div className={`flex flex-col gap-6 pt-4 w-full md:w-[560px] ${className}`}>
+        <div className={`flex flex-col gap-6 pt-4 w-full md:w-140 ${className}`}>
             {/* Titre */}
             <div className="space-y-2 ">
-                <label className="text-sm font-medium text-gray-900">Titre</label>
+                <label htmlFor="modif-tache-title" className="text-sm font-medium text-gray-900">Titre</label>
                 <input
+                    id="modif-tache-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -70,8 +71,9 @@ export default function ModalModifyTask({
 
             {/* Description */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Description</label>
+                <label htmlFor="modif-tache-desc" className="text-sm font-medium text-gray-900">Description</label>
                 <input
+                    id="modif-tache-desc"
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -81,9 +83,10 @@ export default function ModalModifyTask({
 
             {/* Échéance */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Échéance</label>
+                <label htmlFor="modif-tache-date" className="text-sm font-medium text-gray-900">Échéance</label>
                 <div className="relative">
                     <input
+                        id="modif-tache-date"
                         type="date"
                         value={dueDate}
                         onChange={(e) => setDueDate(e.target.value)}
@@ -95,7 +98,7 @@ export default function ModalModifyTask({
 
             {/* Assigné à */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Assigné à :</label>
+                <label htmlFor="modif-tache-assignees" className="text-sm font-medium text-gray-900">Assigné à :</label>
 
                 {/* Liste des assignés sélectionnés tags */}
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -125,6 +128,7 @@ export default function ModalModifyTask({
 
                 {/* Sélecteur dropdown */}
                 <select
+                    id="modif-tache-assignees"
                     className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-100 bg-white"
                     value=""
                     onChange={(e) => {
@@ -147,7 +151,7 @@ export default function ModalModifyTask({
 
             {/* Statut */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Statut :</label>
+                <p className="text-sm font-medium text-gray-900">Statut :</p>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setStatus("TODO")}
@@ -174,7 +178,7 @@ export default function ModalModifyTask({
             <div className="pt-4">
                 <button
                     onClick={handleSave}
-                    className="w-[180px] h-10 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-700 rounded-md text-sm font-medium transition-colors"
+                    className="w-45 h-10 bg-gray-200 hover:bg-gray-300 text-gray-500 hover:text-gray-700 rounded-md text-sm font-medium transition-colors"
                 >
                     Enregistrer
                 </button>

@@ -51,7 +51,7 @@ function IconUsers(props: React.SVGProps<SVGSVGElement>) {
 
 function AvatarPill({ initials, className = "" }: { initials: string, className?: string }) {
     return (
-        <span className={`inline-flex h-8 w-8  px-1 py-1 items-center justify-center rounded-full ring-2 ring-white text-[10px]  shrink-0 ${className}`}>
+        <span className={`inline-flex h-8 w-8  px-1 py-1 items-center justify-center rounded-full ring-2 ring-white text-[11px]  shrink-0 ${className}`}>
             {initials}
         </span>
     );
@@ -70,10 +70,10 @@ export default function ProjectCard({
     const pct = clamp(Math.round(progressPercent), 0, 100);
 
     return (
-        <div className="w-full max-w-[380px] h-[351px] rounded-2xl flex flex-col gap-[36px] px-[34px] py-[30px] border border-gray-200 bg-white transition-all hover:shadow-md group-focus:ring-4 group-focus:ring-orange-200 group-focus:border-orange-500">
+        <div className="w-full max-w-95 h-87.75 rounded-2xl flex flex-col gap-9 px-8.5 py-7.5 border border-gray-200 bg-white transition-all hover:shadow-md group-focus:ring-4 group-focus:ring-orange-200 group-focus:border-orange-500">
             {/* Title + description */}
             <div>
-                <h3 className="text-[14px] font-semibold text-gray-900">{title}</h3>
+                <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
                 <p className="mt-1 text-[11px] leading-snug text-gray-400">
                     {description}
                 </p>
@@ -81,7 +81,7 @@ export default function ProjectCard({
 
             {/* Progress */}
             <div className="mt-4">
-                <div className="flex items-center justify-between text-[11px] text-gray-400">
+                <div className="flex items-center justify-between text-xs text-gray-400">
                     <span>Progression</span>
                     <span>{pct}%</span>
                 </div>
@@ -93,7 +93,7 @@ export default function ProjectCard({
                     />
                 </div>
 
-                <p className="mt-2 text-[11px] text-gray-400">
+                <p className="mt-2 text-xs text-gray-400">
                     {doneTasks}/{totalTasks} tâches terminées
                 </p>
             </div>
@@ -101,7 +101,7 @@ export default function ProjectCard({
             {/* Footer */}
             <div className="mt-6 flex flex-col gap-3">
                 {/* Team Label */}
-                <div className="flex items-center gap-2 text-[12px] text-gray-500 font-medium">
+                <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
                     <IconUsers className="h-4 w-4" />
                     <span>Équipe ({teamCount})</span>
                 </div>
@@ -110,12 +110,12 @@ export default function ProjectCard({
                 <div className="flex items-center gap-2">
                     {/* Owner Avatar (First one) */}
                     {ownerAvatars.length > 0 && (
-                        <AvatarPill initials={ownerAvatars[0].initials} className="inline-flex h-8 w-8  px-1 py-1  bg-amber-50 border-white  items-center justify-center rounded-full  text-[10px] font-semibold text-gray-600 shrink-0" />
+                        <AvatarPill initials={ownerAvatars[0].initials} className="inline-flex h-8 w-8  px-1 py-1  bg-amber-50 border-white  items-center justify-center rounded-full  text-xs font-semibold text-gray-600 shrink-0" />
                     )}
 
                     {/* Owner Badge */}
                     <div className="inline-flex items-center rounded-full bg-amber-50 px-3 py-1">
-                        <span className="text-[11px] font-semibold text-amber-600">
+                        <span className="text-xs font-semibold text-amber-600">
                             {ownerLabel}
                         </span>
                     </div>
@@ -130,7 +130,7 @@ export default function ProjectCard({
                             />
                         ))}
                         {ownerAvatars.length > 4 && (
-                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-[10px] font-semibold text-gray-600  ring-white ring-2">
+                            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600  ring-white ring-2">
                                 +{ownerAvatars.length - 4}
                             </span>
                         )}

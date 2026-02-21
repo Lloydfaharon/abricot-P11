@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*', // Quand on appelle /api/...
-        destination: 'http://localhost:8000/:path*', // Next.js redirige vers le backend
+        source: '/api/:path*',
+        destination: `${process.env.API_BACKEND_URL || 'http://localhost:8000'}/:path*`,
       },
     ];
   },

@@ -110,9 +110,9 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
     };
 
     return (
-        <div className="flex flex-col h-[600px] w-full md:w-[600px] px-2 relative font-sans">
+        <div className="flex flex-col h-150 w-full md:w-150 px-2 relative font-sans">
             {/* TITRE DYNAMIQUE */}
-            <div className={`flex items-center gap-3 text-2xl font-semibold text-gray-900 mb-8 flex-shrink-0 ${editingIndex !== null ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`flex items-center gap-3 text-2xl font-semibold text-gray-900 mb-8 shrink-0 ${editingIndex !== null ? 'opacity-50 pointer-events-none' : ''}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
                     <path d="M8.24333 0.574802C8.60336 -0.19163 9.69352 -0.19163 10.0535 0.574802L12.351 5.46554C12.4501 5.67658 12.6199 5.84634 12.8309 5.94548L17.7216 8.2429C18.4881 8.60293 18.4881 9.69309 17.7216 10.0531L12.8309 12.3505C12.6199 12.4497 12.4501 12.6194 12.351 12.8305L10.0535 17.7212C9.69352 18.4876 8.60336 18.4876 8.24333 17.7212L5.9459 12.8305C5.84677 12.6194 5.677 12.4497 5.46597 12.3505L0.575229 10.0531C-0.191203 9.69309 -0.191203 8.60293 0.575229 8.2429L5.46597 5.94547C5.677 5.84634 5.84677 5.67658 5.9459 5.46554L8.24333 0.574802Z" fill="#FF8B42" />
                 </svg>
@@ -132,7 +132,7 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
                         {tasks.map((task, index) => {
                             if (editingIndex === index) {
                                 return (
-                                    <div key={index} className="border border-orange-200 rounded-xl w-[583px] p-4 bg-orange-50/10 shadow-md">
+                                    <div key={index} className="border border-orange-200 rounded-xl w-full  p-4 bg-orange-50/10 shadow-md">
                                         <h4 className="font-bold text-orange-600 text-sm mb-2">Modification de la tâche</h4>
                                         <ModalModifyTask
                                             members={members}
@@ -144,7 +144,7 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
                                             onSave={(data) => handleUpdateTask(index, data)}
                                             onClose={() => setEditingIndex(null)}
                                             // Override width to fit container
-                                            className="w-full !pt-0"
+                                            className="w-full pt-0!"
                                         />
                                     </div>
                                 );
@@ -153,8 +153,8 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
 
                             return (
                                 <div key={index} className="border border-gray-100 rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] bg-white hover:shadow-md hover:border-gray-200 transition-all group relative">
-                                    <h4 className="font-bold text-gray-900 text-[17px] mb-1.5 pr-8">{task.name}</h4>
-                                    <p className="text-gray-500 text-[14px] mb-5 leading-relaxed font-normal">{task.description}</p>
+                                    <h4 className="font-bold text-gray-900 text-base mb-1.5 pr-8">{task.name}</h4>
+                                    <p className="text-gray-500 text-sm mb-5 leading-relaxed font-normal">{task.description}</p>
 
                                     {/* Badges d'infos si présents */}
                                     {(task.assignees?.length || task.dueDate) ? (
@@ -172,7 +172,7 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
                                         </div>
                                     ) : null}
 
-                                    <div className="flex items-center gap-3 text-[12px] font-medium text-gray-500 border-t border-gray-100 pt-4">
+                                    <div className="flex items-center gap-3 text-xs font-medium text-gray-500 border-t border-gray-100 pt-4">
                                         <button
                                             onClick={() => handleDeleteGeneratedTask(index)}
                                             className="flex items-center gap-1.5 hover:text-red-500 transition-colors group"
@@ -197,7 +197,7 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
                                 <button
                                     onClick={handleSaveAll}
                                     disabled={saving}
-                                    className="bg-[#1A1A1A] hover:bg-black text-white px-8 py-3.5 rounded-xl font-medium text-[15px] flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    className="bg-[#1A1A1A] hover:bg-black text-white px-8 py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
                                 >
                                     {saving ? (
                                         <>
@@ -220,10 +220,11 @@ export default function IATaskManager({ projectId, onClose, members = [], onSucc
                 <div className="absolute bottom-0 left-0 right-0 bg-white pt-4 pb-2 z-20 px-2">
                     <div className="relative">
                         <input
+                            aria-label="Décrivez les tâches que vous souhaitez ajouter"
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
                             placeholder="Décrivez les tâches que vous souhaitez ajouter..."
-                            className="w-full bg-[#F9FAFB] hover:bg-gray-50 focus:bg-white border border-transparent focus:border-gray-100 text-gray-800 placeholder-gray-400 text-[14px] py-4 pl-6 pr-16 rounded-[24px] outline-none transition-all"
+                            className="w-full bg-[#F9FAFB] hover:bg-gray-50 focus:bg-white border border-transparent focus:border-gray-100 text-gray-800 placeholder-gray-400 text-sm py-4 pl-6 pr-16 rounded-3xl outline-none transition-all"
                             onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
                             autoFocus={step === 1}
                         />

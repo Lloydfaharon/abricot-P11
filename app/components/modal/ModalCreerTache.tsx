@@ -32,7 +32,7 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
     };
 
     return (
-        <div className="flex flex-col gap-6 w-full md:w-[598px] ">
+        <div className="flex flex-col gap-6 w-full md:w-149.5 ">
             {/* Titre */}
             <h2 className="text-xl font-semibold text-gray-900">
                 Créer une tâche
@@ -40,10 +40,11 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
             {/* Titre */}
             <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label htmlFor="tache-title" className="text-sm font-medium text-gray-700">
                     Titre*
                 </label>
                 <input
+                    id="tache-title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="mt-1 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100"
@@ -52,10 +53,11 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
             {/* Description */}
             <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label htmlFor="tache-desc" className="text-sm font-medium text-gray-700">
                     Description*
                 </label>
                 <input
+                    id="tache-desc"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="mt-1 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-100"
@@ -64,11 +66,12 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
             {/* Échéance */}
             <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label htmlFor="tache-date" className="text-sm font-medium text-gray-700">
                     Échéance*
                 </label>
                 <div className="relative mt-1">
                     <input
+                        id="tache-date"
                         type="date"
                         value={dueDate}
                         onChange={(e) => setDueDate(e.target.value)}
@@ -83,7 +86,7 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
             {/* Assignés */}
             <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label htmlFor="tache-assignees" className="text-sm font-medium text-gray-700">
                     Assigné à :
                 </label>
 
@@ -94,8 +97,16 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
                         return member ? (
                             <span
                                 key={id}
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => setAssignees(prev => prev.filter(mid => mid !== id))}
-                                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium cursor-pointer hover:bg-orange-200 transition-colors"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setAssignees(prev => prev.filter(mid => mid !== id));
+                                    }
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium cursor-pointer hover:bg-orange-200 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
                             >
                                 {member.name}
                                 <span className="text-orange-900 font-bold ml-1">×</span>
@@ -106,6 +117,7 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
                 {/* Sélecteur pour ajouter */}
                 <select
+                    id="tache-assignees"
                     className="mt-1 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-100 bg-white"
                     value="" // Toujours reset à vide pour permettre de resélectionner
                     onChange={(e) => {
@@ -128,9 +140,9 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
             {/* Statut */}
             <div>
-                <label className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-gray-700">
                     Statut :
-                </label>
+                </p>
                 <div className="mt-2 flex gap-2">
                     <button
                         type="button"
@@ -169,7 +181,14 @@ export default function ModalCreateTask({ onSubmit, members = [] }: ModalCreerTa
 
             <button
                 type="button"
+                tabIndex={0}
                 onClick={handleSubmit}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSubmit();
+                    }
+                }}
                 disabled={!title || !description}
                 className={`mt-4 w-fit rounded-lg px-5 py-2.5 text-sm font-medium transition-colors ${title && description
                     ? "bg-orange-500 text-white cursor-pointer hover:bg-orange-600"

@@ -197,7 +197,7 @@ export default function TacheListeCard({
                     </span>
                 </div>
                 <div className="relative" ref={menuRef}>
-                    <button onClick={() => {
+                    <button aria-label="Menu" onClick={() => {
                         setIsMenuOpen(!isMenuOpen);
                         setMenuMode('default');
                     }} className="h-8 w-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 bg-white">
@@ -205,7 +205,7 @@ export default function TacheListeCard({
                     </button>
 
                     {isMenuOpen && (
-                        <div className="absolute right-0 top-10 w-[400px] px-10 py-8 bg-white border border-gray-200 rounded-lg shadow-lg z-50 sm:w-[600px]">
+                        <div className="absolute right-0 top-10 w-100 px-10 py-8 bg-white border border-gray-200 rounded-lg shadow-lg z-50 sm:w-150">
                             {menuMode === 'default' ? (
                                 <div className="flex flex-col ">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
@@ -283,7 +283,7 @@ export default function TacheListeCard({
                             <div key={idx} className="flex items-center gap-2">
                                 {/* Pill Style */}
                                 <div className="flex items-center gap-2">
-                                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-gray-600 text-[9px] font-bold">
+                                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-gray-600 text-[11px] font-bold">
                                         {assignee.initials}
                                     </span>
                                     <div className="px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-xs font-medium">
@@ -307,7 +307,7 @@ export default function TacheListeCard({
                         setIsCommentsOpen(!isCommentsOpen);
                     }
                 }}
-                className="mx-[1px] border-t border-gray-100 pt-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 -mx-6 -mb-2 pb-2 mt-2 transition-colors group focus:outline-none focus:bg-gray-50 px-6 rounded-b-xl"
+                className=" border-t border-gray-100 pt-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 -mx-6 -mb-2 pb-2 mt-2 transition-colors group focus:outline-none focus:bg-gray-50 px-6 rounded-b-xl"
             >
                 <span className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
                     Commentaires ({commentCount})
@@ -343,11 +343,12 @@ export default function TacheListeCard({
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex flex-col gap-2 h-full py-[14px] px-[14px] w-full rounded-lg bg-gray-50">
+                                <div className="flex flex-col gap-2 h-full py-3.5 px-3.5 w-full rounded-lg bg-gray-50">
                                     <input
+                                        aria-label="Ajouter un commentaire"
                                         type="text"
                                         placeholder="Ajouter un commentaire..."
-                                        className="bg-transparent text-sm outline-none w-full h-[55px] placeholder-gray-400 text-gray-700"
+                                        className="bg-transparent text-sm outline-none w-full h-14 placeholder-gray-400 text-gray-700"
                                         value={newComment}
                                         onChange={(e) => setNewComment(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
@@ -360,7 +361,7 @@ export default function TacheListeCard({
                                 <button
                                     onClick={handleAddComment}
                                     disabled={!newComment.trim() || submitting}
-                                    className="text-xs bg-gray-300 text-gray-600 w-[209px] h-[50px] mx-[14px] px-3 py-1.5 rounded-md font-medium hover:bg-gray-400 disabled:opacity-50 transition-colors"
+                                    className="text-xs bg-gray-300 text-gray-600 w-52 h-12 mx-3.5 px-3 py-1.5 rounded-md font-medium hover:bg-gray-400 disabled:opacity-50 transition-colors"
                                 >
                                     {submitting ? 'Envoi...' : 'Envoyer'}
                                 </button>

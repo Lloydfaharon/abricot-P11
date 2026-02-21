@@ -19,12 +19,12 @@ export default function Header() {
 
     const getLinkClass = (path: string) => {
         const active = isActive(path);
-        const base = "flex items-center justify-center gap-0 md:gap-3 rounded-[10px] transition-all font-semibold text-sm";
+        const base = "flex items-center justify-center gap-0 md:gap-3 rounded-xl transition-all font-semibold text-sm";
 
         if (active) {
-            return `${base} bg-black text-white shadow-md w-[50px] h-[50px] md:w-[248px] md:h-[78px]`;
+            return `${base} bg-black text-white shadow-md w-12.5 h-12.5 md:w-62 md:h-20`;
         }
-        return `${base} text-[#E85D04] hover:bg-orange-50 w-[50px] h-[50px] md:w-[248px] md:h-[78px]`;
+        return `${base} text-orange-500 hover:bg-orange-50 w-12.5 h-12.5 md:w-62 md:h-20`;
     };
 
     const getIconClass = (path: string) => {
@@ -46,7 +46,7 @@ export default function Header() {
         <header>
             <div className="flex justify-between items-center h-20 md:h-24 px-4 md:px-10 bg-white">
                 <div>
-                    <Image src="/images/logo.svg" alt="Logo" width={150} height={150} className="w-[110px] md:w-[150px]" />
+                    <Image src="/images/logo.svg" alt="Logo du site" width={150} height={150} priority className="w-28 md:w-38 w-auto h-auto" />
                 </div>
                 <div className="flex gap-2 md:gap-4">
                     <Link href="/dashboard" className={getLinkClass('/dashboard')}>
@@ -55,17 +55,17 @@ export default function Header() {
                             alt="Dashboard"
                             width={20}
                             height={20}
-                            className={getIconClass('/dashboard')}
+                            className={`${getIconClass('/dashboard')} w-auto h-auto`}
                         />
                         <span className="hidden md:block">Tableau de bord</span>
                     </Link>
                     <Link href="/projet" className={getLinkClass('/projet')}>
                         <Image
                             src="/images/Union.svg"
-                            alt="Projets"
+                            alt="page des projets"
                             width={20}
                             height={20}
-                            className={getIconClass('/projet')}
+                            className={`${getIconClass('/projet')} w-auto h-auto`}
                         />
                         <span className="hidden md:block">Projets</span>
                     </Link>
@@ -74,8 +74,8 @@ export default function Header() {
                     <Link href="/compte/moncompte">
                         {/* Avatar dynamique */}
                         <button
-                            className={`w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full flex items-center justify-center text-[12px] md:text-[14px] font-normal transition-all border cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-200 ${pathname.startsWith('/compte')
-                                ? "bg-[#E85D04] text-white "
+                            className={`w-10 h-10 md:w-12.5 md:h-12.5 rounded-full flex items-center justify-center text-xs md:text-sm font-normal transition-all border cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-200 ${pathname.startsWith('/compte')
+                                ? "bg-orange-700 text-white "
                                 : "bg-orange-100 text-gray-700 border-orange-50 hover:bg-orange-100"
                                 }`}
                             title={user?.name || "Chargement..."}

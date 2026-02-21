@@ -53,35 +53,38 @@ export default function LoginPage() {
             {error}
           </div>
         )}
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold text-gray-500 ml-1">Email</label>
+        <div className="flex flex-col gap-1 shrink-0">
+          <label htmlFor="email" className="text-xs font-bold text-gray-500 ml-1">Email</label>
           <input
+            id="email"
             aria-label='email'
+            required
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-200 bg-gray-50 rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
+            className="w-full h-13 px-4 border border-gray-200 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold text-gray-500 ml-1">Mot de passe</label>
+        <div className="flex flex-col gap-1 shrink-0">
+          <label htmlFor="password" className="text-xs font-bold text-gray-500 ml-1">Mot de passe</label>
           <input
             aria-label='password'
             type="password"
+            id="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-200 bg-gray-50 rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
+            className="w-full h-13 px-4 border border-gray-200 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
           />
         </div>
 
-        <button className="bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-800 transition-colors mt-2">
+        <button className="bg-black shrink-0 h-13 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors mt-2">
           {isLoading ? 'Connexion...' : 'Se connecter'}
         </button>
 
         <div className="text-center">
-          <a href="#" className="text-xs text-[#E85D04] hover:underline">Mot de passe oublié ?</a>
+          <a href="#" className="text-xs text-orange-500 hover:underline">Mot de passe oublié ?</a>
         </div>
       </form>
     </AuthLayout>

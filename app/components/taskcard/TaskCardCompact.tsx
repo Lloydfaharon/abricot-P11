@@ -88,11 +88,11 @@ export default function TaskCardCompact({
   status,
 }: TaskCardCompactProps) {
   return (
-    <div className="w-full max-w-[360px] rounded-2xl border border-gray-200 bg-white px-5 py-4 flex flex-col gap-[15px]  ">
+    <div className="w-full max-w-90 rounded-2xl border border-gray-200 bg-white px-5 py-4 flex flex-col gap-4  ">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-[16px] font-semibold text-gray-900 truncate">
+          <h3 className="text-base font-semibold text-gray-900 truncate">
             {title}
           </h3>
           <p className="mt-0.5 text-xs text-gray-400 truncate">

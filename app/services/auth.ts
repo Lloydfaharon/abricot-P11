@@ -1,7 +1,7 @@
 // app/services/auth.ts
 import Cookies from "js-cookie";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"; // Backend Django direct
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api"; // Appelle le proxy Next.js par défaut
 
 export const authService = {
   // Fonction de connexion
@@ -102,6 +102,30 @@ export const authService = {
 
       const responseData = await response.json();
       return responseData.data.user;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updatePassword: async (data: { currentPassword?: string; newPassword?: string; password?: string }) => {
+    const token = Cookies.get('token');
+    try {
+      const response = await fetch(`${API_URL}/auth/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erreur lors du changement de mot de passe");
+      }
+
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       throw error;
     }

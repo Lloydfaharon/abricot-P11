@@ -25,7 +25,7 @@ export default function Comment({
             </div>
 
             {/* Content */}
-            <div className="flex flex-col gap-1 h-full  py-[18px] px-[14px]  w-full rounded-lg bg-gray-100">
+            <div className="flex flex-col gap-1 h-full  py-4.5 px-3.5  w-full rounded-lg bg-gray-100">
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-gray-900">{authorName}</span>
                     <span className="text-xs text-gray-400">{createdAt}</span>

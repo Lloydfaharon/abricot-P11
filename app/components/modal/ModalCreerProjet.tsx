@@ -54,33 +54,37 @@ export default function ModalCreerProjet({ onClose }: ModalCreerProjetProps) {
     };
 
     return (
-        <div className="flex flex-col w-full md:w-[598px] gap-6 pt-2">
+        <div className="flex flex-col w-full md:w-149.5 gap-6 pt-2">
 
             {/* Titre Input */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Titre*</label>
+                <label htmlFor="projet-title" className="text-sm font-medium text-gray-900">Titre*</label>
                 <input
+                    id="projet-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Titre du projet"
                     className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300"
                 />
             </div>
 
             {/* Description Input */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Description*</label>
+                <label htmlFor="projet-description" className="text-sm font-medium text-gray-900">Description*</label>
                 <input
+                    id="projet-description"
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Description du projet"
                     className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-100 placeholder:text-gray-300"
                 />
             </div>
 
             {/* Contributeurs */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Contributeurs</label>
+                <label htmlFor="projet-contributors" className="text-sm font-medium text-gray-900">Contributeurs</label>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-2 empty:hidden">
@@ -110,6 +114,8 @@ export default function ModalCreerProjet({ onClose }: ModalCreerProjetProps) {
 
                 <div className="relative">
                     <select
+                        id="projet-contributors"
+                        aria-label="Choisir un ou plusieurs collaborateurs"
                         className="w-full h-10 px-3 rounded-md border border-gray-200 text-sm text-gray-500 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-100 bg-white appearance-none"
                         value=""
                         onChange={(e) => {

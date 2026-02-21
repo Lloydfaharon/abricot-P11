@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AssignedTask, taskService } from '../services/task';
 import { ProjectData, projectService } from '../services/project';
+import Cookies from 'js-cookie';
 
 import { toast } from 'sonner';
 
@@ -11,6 +12,7 @@ interface GlobalData {
     user: any | null;
     tasks: AssignedTask[];
     projects: ProjectData[];
+    projectsWithTasks: any[]; // NOUVEAU: Données détaillées
     loading: boolean;
     refreshData: () => Promise<void>;
     createTask: (projectId: string, data: any) => Promise<void>;
@@ -24,6 +26,7 @@ const DataContext = createContext<GlobalData>({
     user: null,
     tasks: [],
     projects: [],
+    projectsWithTasks: [], // NOUVEAU
     loading: true,
     refreshData: async () => { },
     createTask: async () => { },
@@ -39,9 +42,16 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState(null);
     const [tasks, setTasks] = useState<AssignedTask[]>([]);
     const [projects, setProjects] = useState<ProjectData[]>([]);
+    const [projectsWithTasks, setProjectsWithTasks] = useState<any[]>([]); // NOUVEAU
     const [loading, setLoading] = useState(true);
 
     const refreshData = async () => {
+        const token = Cookies.get('token');
+        if (!token) {
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await fetch('/api');
@@ -51,6 +61,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                     setUser(json.data.user);
                     setTasks(json.data.tasks || []);
                     setProjects(json.data.projects || []);
+                    setProjectsWithTasks(json.data.projectsWithTasks || []); // NOUVEAU
                 }
             }
         } catch (error) {
@@ -188,7 +199,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     return (
-        <DataContext.Provider value={{ user, tasks, projects, loading, refreshData, createTask, createProject, updateProject, deleteTask, deleteProject }}>
+        <DataContext.Provider value={{ user, tasks, projects, projectsWithTasks, loading, refreshData, createTask, createProject, updateProject, deleteTask, deleteProject }}>
             {children}
         </DataContext.Provider>
     );

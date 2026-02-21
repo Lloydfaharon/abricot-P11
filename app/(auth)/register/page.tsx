@@ -55,37 +55,39 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold text-gray-500 ml-1">Email</label>
+        <div className="flex flex-col gap-1 shrink-0">
+          <label htmlFor="email" className="text-xs font-bold text-gray-500 ml-1">Email</label>
           <input
             aria-label='email'
             type="email"
+            id="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-200 bg-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
+            className="w-full h-13 px-4 border border-gray-200 bg-white rounded-lg outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold text-gray-500 ml-1">Mot de passe</label>
+        <div className="flex flex-col gap-1 shrink-0">
+          <label htmlFor="password" className="text-xs font-bold text-gray-500 ml-1">Mot de passe</label>
           <input
             aria-label='password'
             type="password"
+            id="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             // J'ai uniformisé en rounded-lg pour que ce soit joli comme l'email
-            className="w-full border border-gray-200 bg-white rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
+            className="w-full h-13 px-4 border border-gray-200 bg-white rounded-lg outline-none focus:ring-2 focus:ring-[#E85D04] transition-all"
           />
-          <p className="text-[10px] text-gray-500 ml-1">
+          <p className="text-xs text-gray-500 ml-1">
             Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre.
           </p>
         </div>
 
         <button
           disabled={isLoading}
-          className="bg-black text-white font-bold py-3 rounded-lg hover:bg-gray-800 transition-colors mx-3 mt-2 disabled:opacity-50"
+          className="bg-black shrink-0 h-13 text-white font-bold rounded-lg hover:bg-gray-800 transition-colors mx-3 mt-2 disabled:opacity-50"
         >
           {isLoading ? 'Inscription en cours...' : "S'inscrire"}
         </button>

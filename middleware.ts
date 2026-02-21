@@ -4,18 +4,24 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
+    const { pathname } = request.nextUrl;
 
     // Définir les routes publiques (ne nécessitant pas de connexion)
     const publicRoutes = ['/login', '/register', '/'];
-    const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname === route);
+    const publicApiRoutes = ['/api/auth/login', '/api/auth/register'];
 
-    // Si l'utilisateur n'est pas connecté et essaie d'accéder à une route protégée
+    const isPublicRoute = publicRoutes.includes(pathname) || publicApiRoutes.includes(pathname);
+
+    // 1. Si l'utilisateur n'est pas connecté et tente d'accéder à une route protégée
     if (!token && !isPublicRoute) {
+        if (pathname.startsWith('/api/')) {
+            return NextResponse.json({ message: 'Authentification requise' }, { status: 401 });
+        }
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    // Si l'utilisateur est connecté et essaie d'accéder aux pages de login/register
-    if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+    // 2. Si l'utilisateur est connecté et essaie d'accéder aux pages de login/register
+    if (token && (pathname === '/login' || pathname === '/register')) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
@@ -23,11 +29,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // Matcher toutes les routes sauf :
-    // - api (les routes API)
-    // - _next/static (fichiers statiques)
-    // - _next/image (images optimisées)
-    // - favicon.ico (icône du site)
-    // - images (dossier public d'images)
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images).*)'],
+    // Le matcher inclut tout SAUF les fichiers statiques et images
+    // Correction audit 4.2 : on n'exclut plus /api
+    matcher: ['/((?!_next/static|_next/image|favicon.ico|images).*)'],
 };
